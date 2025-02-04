@@ -68,6 +68,7 @@ class GenericAssistant implements AiAgentInterface
     private $workbench = null;
 
     private $systemPrompt = null;
+    private $temperature = null;
 
     private $systemPromptRendered = null;
 
@@ -87,6 +88,8 @@ class GenericAssistant implements AiAgentInterface
     private $responseAnswerPath = null;
 
     private $responseTitlePath = null;
+
+    
 
     /**
      * 
@@ -117,6 +120,7 @@ class GenericAssistant implements AiAgentInterface
         
         $query = new OpenAiApiDataQuery($this->workbench);
         $query->setSystemPrompt($this->systemPrompt);
+        $query->setTemperature($this->temperature);
         $query->appendMessage($userPromt);
         if (null !== $val = $prompt->getConversationUid()) 
             $query->setConversationUid($val);
@@ -259,6 +263,11 @@ class GenericAssistant implements AiAgentInterface
         $this->systemPrompt = $text;
         return $this;
     }
+    protected function setTemperature(float $t): AiAgentInterface
+    {
+        $this->temperature = $t;
+        return $this;
+    }
 
     /**
      * 
@@ -270,7 +279,7 @@ class GenericAssistant implements AiAgentInterface
         if ($this->systemPromptRendered === null) {
             $renderer = new BracketHashStringTemplateRenderer($this->workbench);
             $renderer->addPlaceholder(new FormulaPlaceholders($this->workbench, null, null, '='));
-            $renderer->addPlaceholder(new ConfigPlaceholders($this->workbench, '~config:'));
+            $renderer->addPlaceholder(resolver: new ConfigPlaceholders($this->workbench, '~config:'));
             if (null !== $app = $this->getApp($prompt)) {
                 $renderer->addPlaceholder(new AppPlaceholders($app, '~app:'));
             }
