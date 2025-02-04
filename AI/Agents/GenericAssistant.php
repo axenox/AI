@@ -263,6 +263,7 @@ class GenericAssistant implements AiAgentInterface
         $this->systemPrompt = $text;
         return $this;
     }
+    //Adding Set Temperature
     protected function setTemperature(float $t): AiAgentInterface
     {
         $this->temperature = $t;
